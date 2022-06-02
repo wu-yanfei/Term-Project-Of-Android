@@ -3,9 +3,12 @@ package com.example.bighomework;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.text.BoringLayout;
 import android.text.Editable;
 import android.text.SpannableString;
 import android.text.TextWatcher;
@@ -13,6 +16,7 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -22,9 +26,13 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText edt_phone, edt_password;
-    TextView txv_forget;
-    Button btn_register, btn_login;
+    private EditText edt_phone, edt_password;
+    private TextView txv_forget;
+    private Button btn_register, btn_login;
+
+    //记住密码和自动登录
+    private CheckBox ckb_remember, ckb_autoLogin;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +44,28 @@ public class LoginActivity extends AppCompatActivity {
         txv_forget = findViewById(R.id.forget);
         btn_register = findViewById(R.id.register);
         btn_login = findViewById(R.id.login);
+
+        ckb_remember = findViewById(R.id.remember);
+        ckb_autoLogin = findViewById(R.id.autoLogin);
+
+        sharedPreferences = getSharedPreferences("user_autoLogin", Context.MODE_PRIVATE);
+        ckb_remember.setChecked(true);
+
+        //判断记住密码多选框的状态
+        if(sharedPreferences.getBoolean("rem_isCheck", false))
+        {
+            //自动填充账号密码
+            edt_phone.setText(sharedPreferences.getString("USER_NAME", ""));
+            edt_password.setText(sharedPreferences.getString("PASSWORD", ""));
+
+            if (sharedPreferences.getBoolean("auto_isCheck", false)) {
+                //跳转界面
+                //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                //LoginActivity.this.startActivity(intent);
+                Toast.makeText(LoginActivity.this, "自动登录成功", Toast.LENGTH_SHORT).show();
+            }
+
+        }
 
         //限制手机号为大陆11位手机号
         edt_phone.addTextChangedListener(new TextWatcher() {
@@ -107,6 +137,24 @@ public class LoginActivity extends AppCompatActivity {
                         if(password.equals(list.get(0).getPassword()))
                         {
                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                            if (ckb_remember.isChecked())
+                            {
+                                //记住用户名、密码、
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("USER_NAME", phone);
+                                editor.putString("PASSWORD", password);
+                                editor.putBoolean("rem_isCheck", ckb_remember.isChecked());
+                                if(ckb_autoLogin.isChecked())
+                                {
+                                    editor.putBoolean("auto_isCheck", true);
+                                }
+                                else
+                                {
+                                    editor.putBoolean("auto_isCheck", false);
+                                }
+
+                                editor.commit();
+                            }
                         }
                         else
                         {
