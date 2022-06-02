@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText edt_phone, edt_password, edt_repassword, edt_email;
-    Button btn_register;
+    private EditText edt_phone, edt_password, edt_repassword, edt_email;
+    private Button btn_register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

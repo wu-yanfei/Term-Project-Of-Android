@@ -16,8 +16,8 @@ import java.util.List;
 
 public class ForgetPasswordActivity extends AppCompatActivity {
 
-    EditText edt_phone, edt_email, edt_password, edt_repassword;
-    Button btn_update;
+    private EditText edt_phone, edt_email, edt_password, edt_repassword;
+    private Button btn_update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

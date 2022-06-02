@@ -32,7 +32,7 @@ public final class User_Database extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
-    //添加数据
+    //添加用户数据
     public void adddata(SQLiteDatabase sqLiteDatabase,String phone,String password,String email){
         ContentValues values=new ContentValues();
 
@@ -44,13 +44,13 @@ public final class User_Database extends SQLiteOpenHelper {
         sqLiteDatabase.close();
     }
 
-    //删除数据方法
-//    public void delete(SQLiteDatabase sqLiteDatabase,String phone) {
-//        sqLiteDatabase.delete("user","phone=?", new String[]{phone+""});
-//        sqLiteDatabase.close();
-//    }
+    //删除用户数据
+    public void delete(SQLiteDatabase sqLiteDatabase,String phone) {
+        sqLiteDatabase.delete("user","phone=?", new String[]{phone+""});
+        sqLiteDatabase.close();
+    }
 
-    //修改数据方法
+    //修改用户数据（忘记密码）
     public void update(SQLiteDatabase sqLiteDatabase,String phone,String paswd,String email){
         //创建一个ContentValues对象
         ContentValues values=new ContentValues();
@@ -60,7 +60,8 @@ public final class User_Database extends SQLiteOpenHelper {
         sqLiteDatabase.update("user",values,"phone=?",new String[]{phone+""});
         sqLiteDatabase.close();
     }
-    //查询数据
+
+    //查询用户数据
     public List<UserInfo> queryData(SQLiteDatabase sqLiteDatabase, String phone1)
     {
         Cursor cursor=sqLiteDatabase.query("user",null,null,null,null,null,null);
