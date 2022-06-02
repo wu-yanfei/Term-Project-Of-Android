@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ import java.util.List;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText edt_phone, edt_password;
-    private TextView txv_forget;
+    private TextView txv_forget, txv_delete;
     private Button btn_register, btn_login;
 
     //记住密码和自动登录
@@ -42,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         edt_phone = findViewById(R.id.phone);
         edt_password = findViewById(R.id.password);
         txv_forget = findViewById(R.id.forget);
+        txv_delete = findViewById(R.id.delete);
         btn_register = findViewById(R.id.register);
         btn_login = findViewById(R.id.login);
 
@@ -109,6 +111,30 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //勾选自动登录必须勾选记住密码
+        ckb_autoLogin.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b && !ckb_remember.isChecked())
+                {
+                    ckb_remember.setChecked(true);
+                }
+                else if(!b && ckb_remember.isChecked())
+                {
+                    ckb_remember.setChecked(false);
+                }
+            }
+        });
+        ckb_remember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(!b && ckb_autoLogin.isChecked())
+                {
+                    ckb_autoLogin.setChecked(false);
+                }
+            }
+        });
+
         //进行登录
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +156,12 @@ public class LoginActivity extends AppCompatActivity {
 
                     if(list.size() == 0)
                     {
+                        //取消记住用户名、密码、
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean("rem_isCheck", false);
+
+                        editor.commit();
+
                         Toast.makeText(LoginActivity.this, "没有用户信息", Toast.LENGTH_SHORT).show();
                     }
                     else
@@ -139,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
                             Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
                             if (ckb_remember.isChecked())
                             {
-                                //记住用户名、密码、
+                                //记住用户名、密码
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 editor.putString("USER_NAME", phone);
                                 editor.putString("PASSWORD", password);
@@ -155,9 +187,23 @@ public class LoginActivity extends AppCompatActivity {
 
                                 editor.commit();
                             }
+                            else
+                            {
+                                //取消记住用户名、密码、
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("rem_isCheck", false);
+
+                                editor.commit();
+                            }
                         }
                         else
                         {
+                            //取消记住用户名、密码、
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putBoolean("rem_isCheck", false);
+
+                            editor.commit();
+
                             Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -174,11 +220,20 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        //忘记密码的跳转
+        //跳转忘记密码
         txv_forget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, ForgetPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //跳转到账号注销
+        txv_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, LogoutActivity.class);
                 startActivity(intent);
             }
         });
